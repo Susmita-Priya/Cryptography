@@ -1,0 +1,107 @@
+def generate_pairs(message):
+    pairs = []
+    i = 0
+    while i < len(message):
+        pair = message[i] + message[i + 1]
+        pairs.append(pair)
+        i += 2
+    return pairs
+
+
+def get_coordinates(key_square, char):
+    row, col = divmod(key_square.index(char), 5)
+    return row, col
+
+
+def playfair_encrypt(message, key_square):
+    pairs = generate_pairs(message)
+
+    encrypted_message = ""
+    for pair in pairs:
+        char1, char2 = pair[0], pair[1]
+
+        row1, col1 = get_coordinates(key_square, char1)
+        row2, col2 = get_coordinates(key_square, char2)
+
+        if row1 == row2:
+            encrypted_message += key_square[row1 * 5 + (col1 + 1) % 5]
+            encrypted_message += key_square[row2 * 5 + (col2 + 1) % 5]
+        elif col1 == col2:
+            encrypted_message += key_square[((row1 + 1) % 5) * 5 + col1]
+            encrypted_message += key_square[((row2 + 1) % 5) * 5 + col2]
+        else:
+            encrypted_message += key_square[row1 * 5 + col2]
+            encrypted_message += key_square[row2 * 5 + col1]
+
+    return encrypted_message
+
+
+def playfair_decrypt(encrypted_message, key_square):
+    pairs = generate_pairs(encrypted_message)
+
+    decrypted_message = ""
+    for pair in pairs:
+        char1, char2 = pair[0], pair[1]
+
+        row1, col1 = get_coordinates(key_square, char1)
+        row2, col2 = get_coordinates(key_square, char2)
+
+        if row1 == row2:
+            decrypted_message += key_square[row1 * 5 + (col1 - 1) % 5]
+            decrypted_message += key_square[row2 * 5 + (col2 - 1) % 5]
+        elif col1 == col2:
+            decrypted_message += key_square[((row1 - 1) % 5) * 5 + col1]
+            decrypted_message += key_square[((row2 - 1) % 5) * 5 + col2]
+        else:
+            decrypted_message += key_square[row1 * 5 + col2]
+            decrypted_message += key_square[row2 * 5 + col1]
+
+    return decrypted_message
+
+
+message = input("Enter the plaintext : ")
+# Replace 'J' with 'I'
+message = message.upper().replace('J', 'I')
+
+# same letter add bougus letter
+for i in range(len(message)-1):
+    if message[i]== message[i+1]:
+        msg=message[i]+message[i+1]
+        msg1=message[i]+"X"+message[i+1]
+        message = message.replace(msg, msg1)
+
+# if odd add bougus letter        
+l=len(message)
+if (l%2)!=0:
+    message=message+"X"
+
+
+key = input("Enter the key : ")
+# Replace 'J' with 'I'
+key = key.upper().replace('J', 'I')
+
+# Generate the key square (5x5 matrix)
+alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+key = key + alphabet
+key_square = []
+for char in key:
+    if char not in key_square:
+        key_square.append(char)
+
+print("\nAfter Processed Plaintext : ",message)
+print("Key is : ")
+print(key_square)
+print()
+
+encrypted_message = playfair_encrypt(message, key_square)
+print("Encrypted message:", encrypted_message)
+
+decrypted_message = playfair_decrypt(encrypted_message, key_square)
+decrypted_message=decrypted_message.lower()
+print("Decrypted message:", decrypted_message)
+
+# same letter add bougus letter
+for i in range(2,len(decrypted_message)):
+    if decrypted_message[i-1]== "x":
+        decrypted_message = decrypted_message.replace("x", "")
+print("Finally Processed Decrypted message : ",decrypted_message)
