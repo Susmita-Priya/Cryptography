@@ -1,0 +1,53 @@
+def Multiplicative_encrypt(plaintext, key):
+    ciphertxt = ""
+
+    for i in range(len(plaintext)):
+        char = plaintext[i]
+
+        # "space" remains on the cipher text.
+        if (char == ' '):
+            ciphertxt += char
+            
+        # "Upper Case" ascii value start from 65.
+        # ord() function takes a single character and return its integer value.
+        elif (char.isupper()):
+            ciphertxt += chr((((ord(char) - 65) * key) % 26 ) + 65)
+            
+        # "Lower case latter" ascii value start from 97. and also have to show in captital letter(-32)
+        else:
+            ciphertxt += chr(((((ord(char) -97) * key) % 26) + 97) - 32)   
+
+    return ciphertxt
+
+
+
+def Multiplicative_decrypt(ciphertext, key):
+    
+    inv_key = pow(key,-1,26)
+    
+    plaintxt = ""
+
+    for i in range(len(ciphertext)):
+        char = ciphertext[i]
+        # "space" remains on the cipher text.
+        if char == ' ':
+            plaintxt += char
+       
+    # convert lower case(+32)
+        elif char.isupper():
+            plaintxt += chr(((((ord(char) - 65) * inv_key) % 26) + 65) + 32)   
+            
+        else:
+            plaintxt += chr((((ord(char) - 97) * inv_key) % 26) + 97)
+    return plaintxt
+
+
+message = input("Enter the plaintext : ")
+key = int(input("Enter the key : "))
+print()
+
+encrypted_message = Multiplicative_encrypt(message, key)
+print("Encrypted message:", encrypted_message)
+
+decrypted_message = Multiplicative_decrypt(encrypted_message, key)
+print("Decrypted message:", decrypted_message)
