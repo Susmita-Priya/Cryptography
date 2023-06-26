@@ -1,0 +1,59 @@
+def rail_fence2_encrypt(plaintext): 
+    c1=0
+    c2=0
+    p1=""
+    p2=""
+    p3=""
+    ciphertext =""
+    for i in range(len(plaintext)):
+        if (i%2) == 0:
+            if c1<=c2 :                  # add 1st rail
+                p1 += plaintext[i]
+                c1+=1
+            else :                      # add 3rd rail
+                p3 +=plaintext[i]
+                c2+=1
+        elif (i%2)!= 0 :                # add 2nd rail
+            p2 += plaintext[i]
+    ciphertext = p1+p2+p3
+    #print(p1+" "+p2+" "+p3)
+    return ciphertext,p1,p2,p3
+
+def rail_fence2_decrypt(ciphertext,p1,p2,p3): 
+    plaintext=""
+    c3=0
+    for i in range(len(p2)-1):
+        if (p1[i] !='1') & (p3[i] !='1'):
+            if c3<(len(p2)-1):
+                plaintext +=p1[i]+p2[c3]+p3[i]+p2[c3+1]   #jodi p2 beshi thake tahole prothom 4ta kore nibo
+            else :
+                plaintext +=p1[i]+p2[c3]+p3[i]    # nahole 3ta nibo
+        elif (p1[i]== '1'):
+            if (p3[i]!= '1'):
+                plaintext +=p3[i]
+            else :
+                plaintext=plaintext
+        elif (p3[i]== '1'):
+            if (p1[i]!= '1'):
+                plaintext += p1[i]
+            else:
+                plaintext=plaintext
+        c3+=2
+    return plaintext
+
+
+pt = input("Enter the plaintext : ")
+plaintext=pt.replace(' ', '')
+
+encrypted_message,p1,p2,p3 = rail_fence2_encrypt(plaintext)
+print("Encrypted message:", encrypted_message.upper())
+
+for j in range(len(p2)):
+    if len(p1) != len(p2):
+        p1+='1'
+    if len(p3) != len(p2):
+        p3+='1'
+#print(p1+" "+p2+" "+p3)    
+decrypted_message = rail_fence2_decrypt(encrypted_message,p1,p2,p3).lower()
+print("Decrypted message:", decrypted_message)
+
