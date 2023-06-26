@@ -1,0 +1,59 @@
+import numpy as np
+
+# key is represented into 3*3 matrix
+key = np.array([
+    [17, 17, 5],
+    [21, 18, 21],
+    [2, 2, 19]
+])
+
+#determinator
+det = int(np.round(np.linalg.det(key)))
+det_inv = pow(det, -1, 26)
+matrix_modulus_inv = (det_inv * np.round(det * np.linalg.inv(key)).astype(int) % 26) 
+
+def Hill_encrypt(plaintext):  
+    ciphertext=""
+    i=0
+    while i < len(plaintext):
+        a = ord(plaintext[i]) - 97
+        b = ord(plaintext[i+1]) - 97
+        c = ord(plaintext[i+2]) - 97
+        matrix = np.array([[a],
+                           [b],
+                           [c]])
+        cipher = np.dot(key, matrix)%26      # matrix multiplication
+        listy = cipher.flatten().tolist()     # convert matrix into list,flatten converts in one array
+        for j in range(3):
+            ciphertext += chr(listy[j]+97)
+        i = i+3
+        
+    return ciphertext
+    
+def Hill_decrypt(ciphertext):
+    plaintext=""
+    i=0
+    while i < len(ciphertext):
+        a = ord(ciphertext[i]) -65
+        b = ord(ciphertext[i+1]) - 65
+        c = ord(ciphertext[i+2]) - 65
+        matrix = np.array([[a],
+                           [b],
+                           [c]])
+        cipher = np.dot(matrix_modulus_inv, matrix)%26      # matrix multiplication
+        listy = cipher.flatten().tolist()     # convert matrix into list
+        for j in range(3):
+            plaintext += chr(listy[j]+65)
+        i = i+3
+        
+    return plaintext
+
+message = input("Enter the plaintext : ").replace(" ","")
+print("key is: \n",key)
+print()
+
+encrypted_message = Hill_encrypt(message).upper()
+print("Encrypted message:", encrypted_message)
+
+decrypted_message = Hill_decrypt(encrypted_message).lower()
+print("Decrypted message:", decrypted_message)
