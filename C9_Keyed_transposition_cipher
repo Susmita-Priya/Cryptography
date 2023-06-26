@@ -1,0 +1,95 @@
+def keyed_trans_encrypt(plaintext,key):  
+    encrypted_msg=[]
+    encrypted_msg2=""
+    encrypted_msg3=[]
+    encrypted_msg4=""
+    l=len(key)
+    
+    #column wise array create
+    c=0
+    while c<l: 
+        ciphertext=""
+        for i in range(len(plaintext)):         
+            char = plaintext[i]
+            col = i%l   
+            if col == c:                   
+                ciphertext+=char
+        encrypted_msg.append(ciphertext)
+        c+=1
+        
+    #re-order this array using key
+    c=0
+    while c<l:
+        k=key[c]-1
+        encrypted_msg2+=encrypted_msg[k]
+        encrypted_msg3.append(encrypted_msg[k])
+        c+=1
+    
+    #column wise array create for read row by row
+    c=0
+    while c<l: 
+        ciphertext=""
+        for i in range(len(plaintext)):         
+            char = encrypted_msg2[i]
+            col = i%(l-1) 
+            if col == c:
+                ciphertext+=char
+        encrypted_msg4+=ciphertext
+        c+=1
+    return encrypted_msg4,encrypted_msg3
+
+def keyed_trans_decrypt(ciphertext,key,encrypted_msg3):  
+    decrypted_msg=""
+    decrypted_msg2=""
+    l=len(key)
+        
+    #re-order this array using key
+    c=0
+    while c<l:
+        for i in range(l):
+            if c==(key[i]-1) : 
+                decrypted_msg2+=encrypted_msg3[i]
+        c+=1
+    
+    #column wise array create for read row by row
+    c=0
+    while c<l: 
+        plaintext=""
+        for i in range(len(ciphertext)):         
+            char = decrypted_msg2[i]
+            col = i%(l-1)  
+            if col == c:
+                plaintext+=char
+        decrypted_msg+=plaintext
+        c+=1
+    return decrypted_msg
+    
+    
+#message = "enemy attacks to night"
+message=input("Enter the plaintext : ")
+
+message=message.replace(" ","")
+
+lm=len(message)
+if(lm%2)!=0:
+    message+='z'
+    
+message_square = []
+for char in message:  
+    message_square.append(char)
+
+#key=[3, 1, 4, 5, 2] 
+k=input("Enter the key seperated by space: ")
+# Split space-separated values of string into individual elements
+k1 = k.split()
+# Convert each element to an integer
+key = [int(element) for element in k1]
+# Print the resulting list
+print("Key is : ",key)
+
+encrypted_message,encrypted_msg3 = keyed_trans_encrypt(message_square,key)
+print("Encrypted message:", encrypted_message.upper())
+
+decrypted_message = keyed_trans_decrypt(encrypted_message,key,encrypted_msg3)
+print("Decrypted message:", decrypted_message.lower())
+print("After processing, Decrypted message:", decrypted_message.lower().replace('z',''))
