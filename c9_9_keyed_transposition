@@ -1,0 +1,51 @@
+import numpy as np
+
+#msg=input("Enter plaintext : ").replace(" ","").lower()
+#key=input("Enter key seperate by spcae : ")
+
+msg="enemy attacks to night"
+msg=msg.replace(" ","")
+key="3 1 4 5 2"
+k=np.array([[0,1,0,0,0],[0,0,0,0,1],[1,0,0,0,0],[0,0,1,0,0],[0,0,0,1,0]])
+
+key=key.split()
+lkey=len(key)
+lmsg=len(msg)
+
+if (lmsg%lkey) !=0:
+    msg+='z'
+lmsg=len(msg)
+row=int(lmsg/lkey)
+col=lkey
+
+pt1=[]
+c=0
+for i in range(row):
+    pt2=[]
+    for j in range(col):
+        char=msg[c]
+        c+=1
+        pt2.append(ord(char)-97)
+    pt1.append(pt2)
+
+pmatrix=np.array(pt1)
+print(pmatrix)
+
+#encryption
+mul=pmatrix.dot(k)
+ciphertext=""
+for i in range(len(mul)):
+    for j in range(len(mul[0])):
+        n=mul[i][j]
+        ciphertext+=chr(n+65)
+print(ciphertext)
+
+#decryption
+kinv=np.transpose(k)
+mul1=mul.dot(kinv)
+plaintext=""
+for i in range(len(mul1)):
+    for j in range(len(mul1[0])):
+        n=mul1[i][j]
+        plaintext+=chr(n+97)
+print(plaintext)
