@@ -1,0 +1,50 @@
+import numpy as np
+
+msg="corona virus"
+msg=msg.replace(" ","").lower()
+key=np.array([[9,7,11,13],[4,7,5,6],[2,1,14,9],[3,23,21,8]])
+lkey=len(key[0])
+lmsg=len(msg)
+
+if (lmsg%lkey)!=0:
+    msg+='z'
+
+lmsg=len(msg)
+row=int(lmsg/lkey)
+col=lkey
+
+pt1=[]
+c=0
+for i in range(row):
+    pt2=[]
+    for j in range(col):
+        char=msg[c]
+        c+=1
+        pt2.append(ord(char)-97)
+    pt1.append(pt2)
+
+plaintext=np.array(pt1)
+
+#Encryption
+mul=plaintext.dot(key)%26
+print(mul)
+ciphertext=""
+for i in range(len(mul)):
+    for j in range(len(mul[i])):
+        n=mul[i][j]
+        ciphertext+=chr(n+65)
+print(ciphertext)
+
+#Decryption
+dt=int(np.round(np.linalg.det(key)))
+invdt=pow(dt,-1,26)
+invk=(invdt*(np.round(dt*np.linalg.inv(key))).astype(int))%26
+print(invk)
+
+mul1=mul.dot(invk)%26
+plaintext=""
+for i in range(len(mul1)):
+    for j in range(len(mul1[i])):
+        n=mul1[i][j]
+        plaintext+=chr(n+97)
+print(plaintext)
